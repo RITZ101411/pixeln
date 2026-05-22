@@ -1,0 +1,25 @@
+{
+  "name": "pixeln",
+  "version": "1.0.0",
+  "description": "pixel-native UI library for the modern web.",
+  "homepage": "https://github.com/RITZ101411/Pixeln#readme",
+  "bugs": {
+    "url": "https://github.com/RITZ101411/Pixeln/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RITZ101411/Pixeln.git"
+  },
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "private": true,
+
+  "exports": "./packages/core/src/index.ts",
+
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "echo \"no test yet\""
+  }
+}
