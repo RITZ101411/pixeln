@@ -14,12 +14,15 @@
   "author": "",
   "type": "module",
   "private": true,
-
-  "exports": "./packages/core/src/index.ts",
-
+  "packageManager": "pnpm@10.26.2",
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "test": "echo \"no test yet\""
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.1.0"
   }
 }
