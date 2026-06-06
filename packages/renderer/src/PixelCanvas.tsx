@@ -9,15 +9,29 @@ export interface PixelCanvasProps {
   children?: React.ReactNode;
 }
 
+function isPixelElement(child: React.ReactElement): boolean {
+  return typeof child.type === "string";
+}
+
 function childrenToNodes(children: React.ReactNode): Node[] {
   const nodes: Node[] = [];
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return;
+    if (!isPixelElement(child)) return;
     const { children: nested, ...props } = child.props as any;
     const node = createNode(child.type as string, props, childrenToNodes(nested));
     nodes.push(node);
   });
   return nodes;
+}
+
+function collectOverlays(children: React.ReactNode): React.ReactElement[] {
+  const overlays: React.ReactElement[] = [];
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return;
+    if (!isPixelElement(child)) overlays.push(child);
+  });
+  return overlays;
 }
 
 export function PixelCanvas({ width, height, scale = 1, grid = false, children }: PixelCanvasProps) {
@@ -33,6 +47,8 @@ export function PixelCanvas({ width, height, scale = 1, grid = false, children }
     renderTree(root, buffer);
     ctx.putImageData(buffer.toImageData(), 0, 0);
   }, [width, height, scale, grid, children]);
+
+  const overlays = collectOverlays(children);
 
   const containerStyle: React.CSSProperties = {
     position: "relative",
@@ -58,5 +74,6 @@ export function PixelCanvas({ width, height, scale = 1, grid = false, children }
   return React.createElement("div", { style: containerStyle },
     React.createElement("canvas", { ref: canvasRef, width, height, style: canvasStyle }),
     React.createElement("div", { style: gridStyle }),
+    ...overlays,
   );
 }
