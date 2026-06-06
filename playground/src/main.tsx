@@ -11,7 +11,7 @@ function App() {
         <box x={4} y={12} w={12} h={6} bg="blue" />
         <pixel x={20} y={20} bg="yellow" />
 
-        <Overlay x={4} y={12} w={12} h={6} scale={12}>
+        <Overlay x={4} y={12} w={12} h={6}>
           <button
             onClick={() => alert("Clicked!")}
             style={{

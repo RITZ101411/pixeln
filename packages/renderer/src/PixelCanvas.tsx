@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { PixelBuffer, createNode, renderTree, Node } from "@pixeln/core";
+import { PixelProvider } from "./context";
 
 export interface PixelCanvasProps {
   width: number;
@@ -71,9 +72,11 @@ export function PixelCanvas({ width, height, scale = 1, grid = false, children }
     pointerEvents: "none",
   } : { display: "none" };
 
-  return React.createElement("div", { style: containerStyle },
-    React.createElement("canvas", { ref: canvasRef, width, height, style: canvasStyle }),
-    React.createElement("div", { style: gridStyle }),
-    ...overlays,
+  return React.createElement(PixelProvider, { value: { scale } },
+    React.createElement("div", { style: containerStyle },
+      React.createElement("canvas", { ref: canvasRef, width, height, style: canvasStyle }),
+      React.createElement("div", { style: gridStyle }),
+      ...overlays,
+    ),
   );
 }

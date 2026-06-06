@@ -1,15 +1,16 @@
 import React from "react";
+import { usePixel } from "./context";
 
 export interface OverlayProps {
   x: number;
   y: number;
   w: number;
   h: number;
-  scale: number;
   children?: React.ReactNode;
 }
 
-export function Overlay({ x, y, w, h, scale, children }: OverlayProps) {
+export function Overlay({ x, y, w, h, children }: OverlayProps) {
+  const { scale } = usePixel();
   return React.createElement("div", {
     style: {
       position: "absolute",
