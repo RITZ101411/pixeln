@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { PixelBuffer, createNode, renderTree, Node } from "@pixeln/core";
 import { PixelProvider } from "./context";
+import { Overlay } from "./Overlay";
 
 export interface PixelCanvasProps {
   width: number;
@@ -10,46 +11,44 @@ export interface PixelCanvasProps {
   children?: React.ReactNode;
 }
 
-function isPixelElement(child: React.ReactElement): boolean {
-  return typeof child.type === "string";
-}
-
-function childrenToNodes(children: React.ReactNode): Node[] {
-  const nodes: Node[] = [];
+function flattenChildren(children: React.ReactNode): React.ReactElement[] {
+  const result: React.ReactElement[] = [];
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return;
-    if (!isPixelElement(child)) return;
-    const { children: nested, ...props } = child.props as any;
-    const node = createNode(child.type as string, props, childrenToNodes(nested));
-    nodes.push(node);
+    if (child.type === React.Fragment) {
+      result.push(...flattenChildren((child.props as any).children));
+    } else if (typeof child.type === "function" && !(child.type as any)._isOverlay) {
+      const rendered = (child.type as Function)(child.props);
+      result.push(...flattenChildren(rendered));
+    } else {
+      result.push(child);
+    }
   });
-  return nodes;
-}
-
-function collectOverlays(children: React.ReactNode): React.ReactElement[] {
-  const overlays: React.ReactElement[] = [];
-  React.Children.forEach(children, (child) => {
-    if (!React.isValidElement(child)) return;
-    if (!isPixelElement(child)) overlays.push(child);
-  });
-  return overlays;
+  return result;
 }
 
 export function PixelCanvas({ width, height, scale = 1, grid = false, children }: PixelCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const flat = flattenChildren(children);
+
+  const pixelElements = flat.filter((el) => typeof el.type === "string");
+  const overlayElements = flat.filter((el) => (el.type as any)?._isOverlay);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
 
-    const root = createNode("root", {}, childrenToNodes(children));
+    const nodes: Node[] = pixelElements.map((el) => {
+      const { children: nested, ...props } = el.props as any;
+      return createNode(el.type as string, props, nested ? buildNodes(nested) : []);
+    });
+
+    const root = createNode("root", {}, nodes);
     const buffer = new PixelBuffer(width, height);
     renderTree(root, buffer);
     ctx.putImageData(buffer.toImageData(), 0, 0);
   }, [width, height, scale, grid, children]);
-
-  const overlays = collectOverlays(children);
 
   const containerStyle: React.CSSProperties = {
     position: "relative",
@@ -76,7 +75,18 @@ export function PixelCanvas({ width, height, scale = 1, grid = false, children }
     React.createElement("div", { style: containerStyle },
       React.createElement("canvas", { ref: canvasRef, width, height, style: canvasStyle }),
       React.createElement("div", { style: gridStyle }),
-      ...overlays,
+      ...overlayElements,
     ),
   );
+}
+
+function buildNodes(children: React.ReactNode): Node[] {
+  const nodes: Node[] = [];
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return;
+    if (typeof child.type !== "string") return;
+    const { children: nested, ...props } = child.props as any;
+    nodes.push(createNode(child.type, props, nested ? buildNodes(nested) : []));
+  });
+  return nodes;
 }

@@ -12,6 +12,7 @@ export interface OverlayProps {
 export function Overlay({ x, y, w, h, children }: OverlayProps) {
   const { scale } = usePixel();
   return React.createElement("div", {
+    "data-pixeln-overlay": true,
     style: {
       position: "absolute",
       left: x * scale,
@@ -21,3 +22,5 @@ export function Overlay({ x, y, w, h, children }: OverlayProps) {
     },
   }, children);
 }
+
+Overlay._isOverlay = true;
