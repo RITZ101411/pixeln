@@ -1,10 +1,11 @@
 import "react";
+import type { BoxProps, PixelProps } from "@pixeln/core";
 
 declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      box: { x?: number; y?: number; w?: number; h?: number; bg?: string | number; children?: React.ReactNode };
-      pixel: { x?: number; y?: number; bg?: string | number };
+      box: BoxProps & { children?: React.ReactNode };
+      pixel: PixelProps & { children?: React.ReactNode };
     }
   }
 }
