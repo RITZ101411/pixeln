@@ -1,6 +1,6 @@
 import { PixelBuffer } from "./PixelBuffer";
 import type { Node } from "./nodeTypes";
-import { renderBox, renderPixel } from "./node";
+import { renderBox, renderPixel, renderCircle } from "./node";
 
 export function renderTree(node: Node, buffer: PixelBuffer, offsetX = 0, offsetY = 0) {
   const x = (node.props.x ?? 0) + offsetX;
@@ -12,6 +12,9 @@ export function renderTree(node: Node, buffer: PixelBuffer, offsetX = 0, offsetY
       break;
     case "pixel":
       renderPixel(node.props, buffer, x, y);
+      break;
+    case "pcircle":
+      renderCircle(node.props, buffer, x, y);
       break;
   }
 
