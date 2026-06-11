@@ -30,11 +30,27 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  packages/renderer:
+  packages/dom:
     dependencies:
       '@pixeln/core':
         specifier: workspace:*
         version: link:../core
+    devDependencies:
+      tsup:
+        specifier: ^8.4.0
+        version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+
+  packages/react:
+    dependencies:
+      '@pixeln/core':
+        specifier: workspace:*
+        version: link:../core
+      '@pixeln/dom':
+        specifier: workspace:*
+        version: link:../dom
     devDependencies:
       '@types/react':
         specifier: ^19.0.0
@@ -54,9 +70,9 @@ importers:
       '@pixeln/core':
         specifier: workspace:*
         version: link:../packages/core
-      '@pixeln/renderer':
+      '@pixeln/react':
         specifier: workspace:*
-        version: link:../packages/renderer
+        version: link:../packages/react
       react:
         specifier: ^19.0.0
         version: 19.2.6

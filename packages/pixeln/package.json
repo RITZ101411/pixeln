@@ -1,0 +1,11 @@
+{
+  "name": "pixeln",
+  "version": "0.0.1",
+  "description": "pixel-native UI library for the modern web",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RITZ101411/pixeln"
+  },
+  "keywords": ["pixel", "ui", "canvas"]
+}

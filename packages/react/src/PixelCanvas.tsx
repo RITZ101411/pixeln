@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
-import { PixelBuffer, createNode, renderTree, Node } from "@pixeln/core";
+import { createNode, Node } from "@pixeln/core";
+import { renderToCanvas } from "@pixeln/dom";
 import { PixelProvider } from "./context";
 import { Overlay } from "./Overlay";
 
@@ -37,17 +38,14 @@ export function PixelCanvas({ width, height, scale = 1, grid = false, children }
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d")!;
 
     const nodes: Node[] = pixelElements.map((el) => {
       const { children: nested, ...props } = el.props as any;
-      return createNode(el.type as string, props, nested ? buildNodes(nested) : []);
+      return createNode(el.type as any, props, nested ? buildNodes(nested) : []);
     });
 
     const root = createNode("root", {}, nodes);
-    const buffer = new PixelBuffer(width, height);
-    renderTree(root, buffer);
-    ctx.putImageData(buffer.toImageData(), 0, 0);
+    renderToCanvas(canvas, root, width, height);
   }, [width, height, scale, grid, children]);
 
   const containerStyle: React.CSSProperties = {
@@ -86,7 +84,7 @@ function buildNodes(children: React.ReactNode): Node[] {
     if (!React.isValidElement(child)) return;
     if (typeof child.type !== "string") return;
     const { children: nested, ...props } = child.props as any;
-    nodes.push(createNode(child.type, props, nested ? buildNodes(nested) : []));
+    nodes.push(createNode(child.type as any, props, nested ? buildNodes(nested) : []));
   });
   return nodes;
 }

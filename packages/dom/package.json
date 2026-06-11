@@ -1,5 +1,5 @@
 {
-  "name": "@pixeln/renderer",
+  "name": "@pixeln/dom",
   "version": "0.0.1",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -20,12 +20,7 @@
   "dependencies": {
     "@pixeln/core": "workspace:*"
   },
-  "peerDependencies": {
-    "react": ">=18"
-  },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "react": "^19.0.0",
     "tsup": "^8.4.0",
     "typescript": "^5.7.0"
   }

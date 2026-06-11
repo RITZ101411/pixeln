@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { PixelCanvas, Button } from "@pixeln/renderer";
+import { PixelCanvas, Button } from "@pixeln/react";
 
 function App() {
   return (
