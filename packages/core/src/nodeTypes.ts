@@ -7,6 +7,7 @@ export interface BoxProps extends BaseProps {
   w?: number;
   h?: number;
   bg?: string | number;
+  radius?: number;
 }
 
 export interface PixelProps extends BaseProps {
