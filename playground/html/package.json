@@ -1,0 +1,16 @@
+{
+  "name": "playground-html",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@pixeln/core": "workspace:*",
+    "@pixeln/dom": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^6.3.0"
+  }
+}

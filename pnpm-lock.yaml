@@ -43,6 +43,8 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
+  packages/pixeln: {}
+
   packages/react:
     dependencies:
       '@pixeln/core':
@@ -65,14 +67,27 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  playground:
+  playground/html:
     dependencies:
       '@pixeln/core':
         specifier: workspace:*
-        version: link:../packages/core
+        version: link:../../packages/core
+      '@pixeln/dom':
+        specifier: workspace:*
+        version: link:../../packages/dom
+    devDependencies:
+      vite:
+        specifier: ^6.3.0
+        version: 6.4.2
+
+  playground/react:
+    dependencies:
+      '@pixeln/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@pixeln/react':
         specifier: workspace:*
-        version: link:../packages/react
+        version: link:../../packages/react
       react:
         specifier: ^19.0.0
         version: 19.2.6
