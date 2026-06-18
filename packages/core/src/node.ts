@@ -21,34 +21,63 @@ function computeInsets(r: number): number[] {
 }
 
 export function renderBox(props: BoxProps, buffer: PixelBuffer, x: number, y: number) {
-  if (props.bg == null) return;
+  if (props.bg == null && props.border == null) return;
   const w = props.w ?? 0;
   const h = props.h ?? 0;
   const r = props.radius ?? 0;
-  const color = parseColor(props.bg);
 
-  if (r <= 0) {
-    buffer.fillRect(x, y, w, h, color);
-    return;
+  if (props.bg != null) {
+    const color = parseColor(props.bg);
+    if (r <= 0) {
+      buffer.fillRect(x, y, w, h, color);
+    } else {
+      const insets = computeInsets(r);
+      for (let py = 0; py < h; py++) {
+        let x0 = 0;
+        let x1 = w;
+        if (py < r) { const inset = insets[py]; x0 = inset; x1 = w - inset; }
+        else if (py >= h - r) { const inset = insets[h - 1 - py]; x0 = inset; x1 = w - inset; }
+        buffer.fillRect(x + x0, y + py, x1 - x0, 1, color);
+      }
+    }
   }
 
-  const insets = computeInsets(r);
-
-  for (let py = 0; py < h; py++) {
-    let x0 = 0;
-    let x1 = w;
-
-    if (py < r) {
-      const inset = insets[py];
-      x0 = inset;
-      x1 = w - inset;
-    } else if (py >= h - r) {
-      const inset = insets[h - 1 - py];
-      x0 = inset;
-      x1 = w - inset;
+  if (props.border != null) {
+    const bc = parseColor(props.border);
+    if (r <= 0) {
+      buffer.fillRect(x, y, w, 1, bc);
+      buffer.fillRect(x, y + h - 1, w, 1, bc);
+      for (let py = 1; py < h - 1; py++) {
+        buffer.set(x, y + py, bc);
+        buffer.set(x + w - 1, y + py, bc);
+      }
+    } else {
+      const insets = computeInsets(r);
+      const getInset = (py: number) => {
+        if (py < r) return insets[py];
+        if (py >= h - r) return insets[h - 1 - py];
+        return 0;
+      };
+      for (let py = 0; py < h; py++) {
+        const inset = getInset(py);
+        const x0 = inset;
+        const x1 = w - inset;
+        if (py === 0 || py === h - 1) {
+          buffer.fillRect(x + x0, y + py, x1 - x0, 1, bc);
+        } else {
+          const prevInset = getInset(py - 1);
+          const nextInset = getInset(py + 1);
+          const leftEnd = Math.max(prevInset, nextInset);
+          for (let px = x0; px < Math.max(x0 + 1, leftEnd); px++) {
+            buffer.set(x + px, y + py, bc);
+          }
+          const rightStart = w - Math.max(prevInset, nextInset);
+          for (let px = Math.min(x1 - 1, rightStart); px < x1; px++) {
+            buffer.set(x + px, y + py, bc);
+          }
+        }
+      }
     }
-
-    buffer.fillRect(x + x0, y + py, x1 - x0, 1, color);
   }
 }
 

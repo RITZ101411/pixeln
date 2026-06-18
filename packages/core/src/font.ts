@@ -1,6 +1,7 @@
 export interface BitmapFont {
   width: number;
   height: number;
+  baseline: number;
   spacing?: number;
   spaceWidth?: number;
   glyphs: Record<string, number[]>;
@@ -122,7 +123,7 @@ registerFont("3x5", (() => {
     "}": [0x03,0x02,0x04,0x02,0x03],
     "~": [0x00,0x00,0x06,0x03,0x00],
   };
-  return { width: 3, height: 5, spacing: 1, spaceWidth: 2, glyphs };
+  return { width: 3, height: 5, baseline: 4, spacing: 1, spaceWidth: 2, glyphs };
 })());
 
 // 5x7 font (LSB first)
@@ -228,7 +229,7 @@ registerFont("5x7", (() => {
   for (const [char, rows] of Object.entries(data)) {
     glyphs[char] = rows;
   }
-  return { width: 5, height: 7, spacing: 1, glyphs };
+  return { width: 5, height: 7, baseline: 5, spacing: 1, glyphs };
 })());
 
 // 8x8 font (1px stroke, LSB first: bit 0 = leftmost pixel)
@@ -334,5 +335,5 @@ registerFont("8x8", (() => {
   for (const [char, rows] of Object.entries(data)) {
     glyphs[char] = rows;
   }
-  return { width: 8, height: 8, spacing: 1, spaceWidth: 4, glyphs };
+  return { width: 8, height: 8, baseline: 6, spacing: 1, spaceWidth: 4, glyphs };
 })());
