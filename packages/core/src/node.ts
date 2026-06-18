@@ -1,6 +1,7 @@
 import { PixelBuffer } from "./PixelBuffer";
 import { parseColor } from "./color";
-import type { BoxProps, PixelProps, CircleProps } from "./nodeTypes";
+import { getFont } from "./font";
+import type { BoxProps, PixelProps, CircleProps, TextProps } from "./nodeTypes";
 
 function computeInsets(r: number): number[] {
   const maxX = new Array(r + 1).fill(0);
@@ -89,6 +90,34 @@ export function renderCircle(props: CircleProps, buffer: PixelBuffer, cx: number
     } else {
       x--;
       d += 2 * (y - x) + 1;
+    }
+  }
+}
+
+export function renderText(props: TextProps, buffer: PixelBuffer, x: number, y: number) {
+  if (props.color == null) return;
+  const font = getFont(props.font);
+  const color = parseColor(props.color);
+  let cx = x;
+
+  for (const char of props.content) {
+    if (char === " ") {
+      cx += font.spaceWidth ?? font.width;
+      continue;
+    }
+    const glyph = font.glyphs[char];
+    if (glyph) {
+      let maxCol = 0;
+      for (let row = 0; row < font.height; row++) {
+        const bits = glyph[row];
+        for (let col = 0; col < font.width; col++) {
+          if (bits & (1 << col)) {
+            buffer.set(cx + col, y + row, color);
+            if (col > maxCol) maxCol = col;
+          }
+        }
+      }
+      cx += maxCol + 1 + (font.spacing ?? 1);
     }
   }
 }

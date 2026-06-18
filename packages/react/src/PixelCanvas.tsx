@@ -41,7 +41,8 @@ export function PixelCanvas({ width, height, scale = 1, grid = false, children }
 
     const nodes: Node[] = pixelElements.map((el) => {
       const { children: nested, ...props } = el.props as any;
-      return createNode(el.type as any, props, nested ? buildNodes(nested) : []);
+      const type = el.type === "ptext" ? "text" : el.type;
+      return createNode(type as any, props, nested ? buildNodes(nested) : []);
     });
 
     const root = createNode("root", {}, nodes);

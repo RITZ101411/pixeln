@@ -1,5 +1,5 @@
 import "react";
-import type { BoxProps, PixelProps, CircleProps } from "@pixeln/core";
+import type { BoxProps, PixelProps, CircleProps, TextProps } from "@pixeln/core";
 
 declare module "react" {
   namespace JSX {
@@ -7,6 +7,7 @@ declare module "react" {
       box: BoxProps & { children?: React.ReactNode };
       pixel: PixelProps & { children?: React.ReactNode };
       pcircle: CircleProps & { children?: React.ReactNode };
+      ptext: TextProps & { children?: React.ReactNode };
     }
   }
 }

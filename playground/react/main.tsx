@@ -4,9 +4,11 @@ import { PixelCanvas } from "@pixeln/react";
 
 function App() {
   return (
-    <PixelCanvas width={64} height={64} scale={10} grid>
-      <box x={4} y={4} w={40} h={24} bg="#4a90d9" radius={8} />
-      <box x={8} y={8} w={32} h={16} bg="#e94560" radius={4} />
+    <PixelCanvas width={80} height={48} scale={8}>
+      <box x={4} y={4} w={72} h={18} bg="#4a90d9" radius={3} />
+      <ptext x={22} y={9} content="Hello!" color="#ffffff" />
+      <box x={4} y={26} w={72} h={14} bg="#333333" radius={6} />
+      <ptext x={11} y={29} content="Packages" color="#e94560" font="8x8" />
     </PixelCanvas>
   );
 }

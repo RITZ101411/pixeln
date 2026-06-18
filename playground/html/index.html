@@ -10,9 +10,9 @@
     import { createNode, renderTree, PixelBuffer } from "@pixeln/core";
     import { createPixelCanvas, createContainer, createGrid } from "@pixeln/dom";
 
-    const width = 32;
+    const width = 64;
     const height = 32;
-    const scale = 10;
+    const scale = 8;
 
     const container = createContainer(width, height, scale);
     const canvas = createPixelCanvas({ width, height, scale });
@@ -23,9 +23,8 @@
     document.getElementById("app").appendChild(container);
 
     const root = createNode("root", {}, [
-      createNode("box", { x: 4, y: 4, w: 24, h: 24, bg: "#4a90d9", radius: 6 }),
-      createNode("pcircle", { x: 16, y: 16, r: 6, bg: "#e94560" }),
-      createNode("pixel", { x: 16, y: 16, bg: "#fff" }),
+      createNode("box", { x: 4, y: 4, w: 56, h: 24, bg: "#4a90d9", radius: 4 }),
+      createNode("text", { x: 10, y: 13, content: "Hello!", color: "#ffffff" }),
     ]);
 
     const ctx = canvas.getContext("2d");
