@@ -1,8 +1,10 @@
 export { PixelCanvas } from "./PixelCanvas";
+export { Pixeln } from "./Pixeln";
 export { Button } from "./components/Button";
 export { Overlay } from "./Overlay";
 export { usePixel } from "./context";
 export type { PixelCanvasProps } from "./PixelCanvas";
+export type { PixelnProps } from "./Pixeln";
 export type { ButtonProps } from "./components/Button";
 export type { OverlayProps } from "./Overlay";
 import "./jsx.d.ts";

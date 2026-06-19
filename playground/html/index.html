@@ -5,44 +5,17 @@
   <title>Pixeln HTML Playground</title>
 </head>
 <body style="margin: 32px; background: #1a1a2e;">
-  <div id="app"></div>
+  <div id="app">
+    <pixeln-canvas width="128" height="64" scale="6" gap="3" padding="4">
+      <h1>Pixeln</h1>
+      <p>pixel-native UI for the web</p>
+      <button onclick="alert('clicked!')">Click me</button>
+      <small>built with layout engine</small>
+    </pixeln-canvas>
+  </div>
   <script type="module">
-    import { createNode, renderTree, PixelBuffer, layout } from "@pixeln/core";
-    import { createPixelCanvas, createContainer, createGrid } from "@pixeln/dom";
-
-    const width = 80;
-    const height = 48;
-    const scale = 8;
-
-    const container = createContainer(width, height, scale);
-    const canvas = createPixelCanvas({ width, height, scale });
-    const grid = createGrid({ width, height, scale });
-
-    container.appendChild(canvas);
-    container.appendChild(grid);
-    document.getElementById("app").appendChild(container);
-
-    const root = layout({
-      type: "vstack", gap: 3, children: [
-        { type: "box", bg: "#4a90d9", border: "#fff", radius: 3, padding: 4, children: [
-          { type: "text", content: "Pixeln", font: "8x8", color: "#ffffff" },
-        ]},
-        { type: "hstack", gap: 4, children: [
-          { type: "box", bg: "#333", padding: 3, children: [
-            { type: "text", content: "3x5", font: "3x5", color: "#00ff88" },
-          ]},
-          { type: "box", bg: "#333", padding: 3, children: [
-            { type: "text", content: "5x7", font: "5x7", color: "#e94560" },
-          ]},
-        ]},
-        { type: "text", content: "layout engine!", font: "3x5", color: "#aaaaaa" },
-      ]
-    }, 4, 4);
-
-    const ctx = canvas.getContext("2d");
-    const buffer = new PixelBuffer(width, height);
-    renderTree(root, buffer);
-    ctx.putImageData(buffer.toImageData(), 0, 0);
+    import { registerPixelnElement } from "@pixeln/dom";
+    registerPixelnElement();
   </script>
 </body>
 </html>
