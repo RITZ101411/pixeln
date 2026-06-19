@@ -7,11 +7,11 @@
 <body style="margin: 32px; background: #1a1a2e;">
   <div id="app"></div>
   <script type="module">
-    import { createNode, renderTree, PixelBuffer } from "@pixeln/core";
+    import { createNode, renderTree, PixelBuffer, layout } from "@pixeln/core";
     import { createPixelCanvas, createContainer, createGrid } from "@pixeln/dom";
 
-    const width = 64;
-    const height = 32;
+    const width = 80;
+    const height = 48;
     const scale = 8;
 
     const container = createContainer(width, height, scale);
@@ -22,10 +22,22 @@
     container.appendChild(grid);
     document.getElementById("app").appendChild(container);
 
-    const root = createNode("root", {}, [
-      createNode("box", { x: 4, y: 4, w: 56, h: 24, bg: "#4a90d9", radius: 4 }),
-      createNode("text", { x: 10, y: 13, content: "Hello!", color: "#ffffff" }),
-    ]);
+    const root = layout({
+      type: "vstack", gap: 3, children: [
+        { type: "box", bg: "#4a90d9", border: "#fff", radius: 3, padding: 4, children: [
+          { type: "text", content: "Pixeln", font: "8x8", color: "#ffffff" },
+        ]},
+        { type: "hstack", gap: 4, children: [
+          { type: "box", bg: "#333", padding: 3, children: [
+            { type: "text", content: "3x5", font: "3x5", color: "#00ff88" },
+          ]},
+          { type: "box", bg: "#333", padding: 3, children: [
+            { type: "text", content: "5x7", font: "5x7", color: "#e94560" },
+          ]},
+        ]},
+        { type: "text", content: "layout engine!", font: "3x5", color: "#aaaaaa" },
+      ]
+    }, 4, 4);
 
     const ctx = canvas.getContext("2d");
     const buffer = new PixelBuffer(width, height);
