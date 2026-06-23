@@ -1,4 +1,4 @@
-import { getFont } from "./font";
+import { getFont, glyphWidth } from "./font";
 import type { Node } from "./nodeTypes";
 import { createNode } from "./nodeTypes";
 
@@ -42,19 +42,8 @@ export function measureText(content: string, fontName?: string): { w: number; h:
       w += font.spaceWidth ?? font.width;
       continue;
     }
-    const glyph = font.glyphs[char];
-    if (glyph) {
-      let maxCol = 0;
-      for (let row = 0; row < font.height; row++) {
-        const bits = glyph[row];
-        for (let col = 0; col < font.width; col++) {
-          if (bits & (1 << col)) {
-            if (col > maxCol) maxCol = col;
-          }
-        }
-      }
-      w += maxCol + 1 + (font.spacing ?? 1);
-    }
+    const gw = glyphWidth(font, char);
+    if (gw > 0) w += gw + (font.spacing ?? 1);
   }
   if (w > 0) w -= (font.spacing ?? 1);
   return { w, h: font.height };

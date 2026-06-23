@@ -19,6 +19,21 @@ export function getFont(size?: string): BitmapFont {
   return fonts.get(defaultSize) ?? fonts.values().next().value!;
 }
 
+export function glyphWidth(font: BitmapFont, char: string): number {
+  const glyph = font.glyphs[char];
+  if (!glyph) return 0;
+  let maxCol = 0;
+  for (let row = 0; row < font.height; row++) {
+    const bits = glyph[row];
+    for (let col = 0; col < font.width; col++) {
+      if (bits & (1 << col)) {
+        if (col > maxCol) maxCol = col;
+      }
+    }
+  }
+  return maxCol + 1;
+}
+
 export function setDefaultFont(name: string) {
   defaultSize = name;
 }

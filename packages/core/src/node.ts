@@ -1,6 +1,6 @@
 import { PixelBuffer } from "./PixelBuffer";
 import { parseColor } from "./color";
-import { getFont } from "./font";
+import { getFont, glyphWidth } from "./font";
 import type { BoxProps, PixelProps, CircleProps, TextProps } from "./nodeTypes";
 
 function computeInsets(r: number): number[] {
@@ -136,17 +136,15 @@ export function renderText(props: TextProps, buffer: PixelBuffer, x: number, y: 
     }
     const glyph = font.glyphs[char];
     if (glyph) {
-      let maxCol = 0;
       for (let row = 0; row < font.height; row++) {
         const bits = glyph[row];
         for (let col = 0; col < font.width; col++) {
           if (bits & (1 << col)) {
             buffer.set(cx + col, y + row, color);
-            if (col > maxCol) maxCol = col;
           }
         }
       }
-      cx += maxCol + 1 + (font.spacing ?? 1);
+      cx += glyphWidth(font, char) + (font.spacing ?? 1);
     }
   }
 }
