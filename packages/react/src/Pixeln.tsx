@@ -8,6 +8,7 @@ export interface PixelnProps {
   scale?: number;
   gap?: number;
   padding?: number;
+  bg?: string | number;
   children?: React.ReactNode;
 }
 
@@ -33,7 +34,7 @@ function extractChildren(children: React.ReactNode): SemanticChild[] {
   return result;
 }
 
-export function Pixeln({ width, height, scale = 4, gap = 2, padding = 4, children }: PixelnProps) {
+export function Pixeln({ width, height, scale = 4, gap = 2, padding = 4, bg, children }: PixelnProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export function Pixeln({ width, height, scale = 4, gap = 2, padding = 4, childre
     if (!container) return;
 
     const semanticChildren = extractChildren(children);
-    const { canvas, overlays } = renderPixeln({ width, height, scale, gap, padding, children: semanticChildren });
+    const { canvas, overlays } = renderPixeln({ width, height, scale, gap, padding, bg, children: semanticChildren });
 
     container.innerHTML = "";
     const overlayContainer = document.createElement("div");
@@ -52,7 +53,7 @@ export function Pixeln({ width, height, scale = 4, gap = 2, padding = 4, childre
 
     container.appendChild(canvas);
     container.appendChild(overlayContainer);
-  }, [width, height, scale, gap, padding, children]);
+  }, [width, height, scale, gap, padding, bg, children]);
 
   const style: React.CSSProperties = {
     position: "relative",

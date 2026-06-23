@@ -5,7 +5,7 @@ export class PixelnCanvas extends HTMLElement {
   private wrapper: HTMLDivElement | null = null;
 
   static get observedAttributes() {
-    return ["width", "height", "scale", "gap", "padding"];
+    return ["width", "height", "scale", "gap", "padding", "bg"];
   }
 
   get pixelWidth() { return parseInt(this.getAttribute("width") ?? "128"); }
@@ -43,7 +43,7 @@ export class PixelnCanvas extends HTMLElement {
       });
     }
 
-    const { canvas, overlays } = renderPixeln({ width: w, height: h, scale, gap, padding, children });
+    const { canvas, overlays } = renderPixeln({ width: w, height: h, scale, gap, padding, bg: this.getAttribute("bg") ?? undefined, children });
 
     const shadow = this.shadowRoot ?? this.attachShadow({ mode: "open" });
     shadow.innerHTML = "";

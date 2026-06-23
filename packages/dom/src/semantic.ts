@@ -1,4 +1,4 @@
-import { PixelBuffer, renderTree, layout, measureText } from "@pixeln/core";
+import { PixelBuffer, renderTree, layout, measureText, parseColor } from "@pixeln/core";
 import type { LayoutNode } from "@pixeln/core";
 import { applyOverlayPosition } from "./overlay";
 
@@ -61,6 +61,7 @@ export interface RenderPixelnOptions {
   scale: number;
   gap?: number;
   padding?: number;
+  bg?: string | number;
   children: SemanticChild[];
 }
 
@@ -70,12 +71,15 @@ export interface RenderPixelnResult {
 }
 
 export function renderPixeln(opts: RenderPixelnOptions): RenderPixelnResult {
-  const { width, height, scale, gap = 2, padding = 4, children } = opts;
+  const { width, height, scale, gap = 2, padding = 4, bg, children } = opts;
 
   const layoutTree = childrenToLayout(children, gap);
   const root = layout(layoutTree, padding, padding);
 
   const buffer = new PixelBuffer(width, height);
+  if (bg) {
+    buffer.fillRect(0, 0, width, height, parseColor(bg));
+  }
   renderTree(root, buffer);
 
   const canvas = document.createElement("canvas");
