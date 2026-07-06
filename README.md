@@ -2,6 +2,8 @@
 
 pixel-native UI library for the modern web.
 
+[日本語](README.ja.md)
+
 ## Packages
 
 | Package | Description |
