@@ -60,7 +60,6 @@ impl PixelBuffer {
         }
     }
 
-    /// Returns RGBA pixel data as a Vec<u8> for use with ImageData on the JS side.
     #[wasm_bindgen(js_name = "toImageData")]
     pub fn to_image_data(&self) -> Vec<u8> {
         let mut rgba = vec![0u8; self.data.len() * 4];
@@ -72,6 +71,14 @@ impl PixelBuffer {
             rgba[j + 3] = c as u8;         // A
         }
         rgba
+    }
+}
+
+impl PixelBuffer {
+    pub fn set_signed(&mut self, x: i32, y: i32, color: u32) {
+        if x >= 0 && y >= 0 {
+            self.set(x as u32, y as u32, color);
+        }
     }
 }
 
