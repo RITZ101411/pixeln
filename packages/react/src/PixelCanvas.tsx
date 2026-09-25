@@ -12,15 +12,23 @@ export interface PixelCanvasProps {
   children?: React.ReactNode;
 }
 
+const PIXEL_TYPES = new Set(["box", "pixel", "pcircle", "ptext"]);
+
 function flattenChildren(children: React.ReactNode): React.ReactElement[] {
   const result: React.ReactElement[] = [];
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return;
     if (child.type === React.Fragment) {
       result.push(...flattenChildren((child.props as any).children));
-    } else if (typeof child.type === "function" && !(child.type as any)._isOverlay) {
-      const rendered = (child.type as Function)(child.props);
-      result.push(...flattenChildren(rendered));
+    } else if (typeof child.type === "function") {
+      // Render compound components via their _pixelnRender static if available,
+      // otherwise treat as overlay/passthrough
+      const render = (child.type as any)._pixelnRender;
+      if (render) {
+        result.push(...flattenChildren(render(child.props)));
+      } else {
+        result.push(child);
+      }
     } else {
       result.push(child);
     }
@@ -32,7 +40,7 @@ export function PixelCanvas({ width, height, scale = 1, grid = false, children }
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const flat = flattenChildren(children);
 
-  const pixelElements = flat.filter((el) => typeof el.type === "string");
+  const pixelElements = flat.filter((el) => typeof el.type === "string" && PIXEL_TYPES.has(el.type));
   const overlayElements = flat.filter((el) => (el.type as any)?._isOverlay);
 
   useEffect(() => {

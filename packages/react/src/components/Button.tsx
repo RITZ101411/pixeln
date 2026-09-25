@@ -19,7 +19,7 @@ const transparentStyle: React.CSSProperties = {
   padding: 0,
 };
 
-export function Button({ x, y, w, h, bg = "blue", onClick }: ButtonProps) {
+function renderButton({ x, y, w, h, bg = "blue", onClick }: ButtonProps) {
   return (
     <>
       <box x={x} y={y} w={w} h={h} bg={bg} />
@@ -29,3 +29,9 @@ export function Button({ x, y, w, h, bg = "blue", onClick }: ButtonProps) {
     </>
   );
 }
+
+export function Button(props: ButtonProps) {
+  return renderButton(props);
+}
+
+Button._pixelnRender = renderButton;
