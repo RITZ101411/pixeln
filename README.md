@@ -4,6 +4,8 @@ Pixel-native UI rendering for the web.
 
 Pixeln takes a small set of semantic HTML elements, lays them out on an integer pixel grid, and rasterizes the result to Canvas. A transparent DOM overlay keeps supported elements interactive and accessible.
 
+[日本語](README.ja.md)
+
 > Pixeln is currently a prototype. The HTML and React adapters intentionally support a narrow set of direct child elements.
 
 ## Packages
