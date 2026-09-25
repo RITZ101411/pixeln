@@ -1,7 +1,11 @@
-import { renderPixeln, TAG_CONFIG } from "./semantic";
+import { isSemanticAttribute, renderPixeln, TAG_CONFIG } from "./semantic";
 import type { SemanticChild } from "./semantic";
 
-export class PixelnCanvas extends HTMLElement {
+const HTMLElementBase = typeof HTMLElement === "undefined"
+  ? class {} as typeof HTMLElement
+  : HTMLElement;
+
+export class PixelnCanvas extends HTMLElementBase {
   private wrapper: HTMLDivElement | null = null;
 
   static get observedAttributes() {
@@ -31,9 +35,16 @@ export class PixelnCanvas extends HTMLElement {
     for (const el of Array.from(this.children)) {
       const tag = el.tagName.toLowerCase();
       if (!TAG_CONFIG[tag]) continue;
+      const attributes: Record<string, string | boolean> = {};
+      for (const attribute of Array.from(el.attributes)) {
+        if (isSemanticAttribute(tag, attribute.name)) {
+          attributes[attribute.name] = attribute.name === "disabled" ? true : attribute.value;
+        }
+      }
       children.push({
         tag,
         text: el.textContent ?? "",
+        attributes,
         font: el.getAttribute("data-font") ?? undefined,
         color: el.getAttribute("data-color") ?? undefined,
         bg: el.getAttribute("data-bg") ?? undefined,
@@ -68,6 +79,7 @@ export class PixelnCanvas extends HTMLElement {
 }
 
 export function registerPixelnElement() {
+  if (typeof customElements === "undefined") return;
   if (!customElements.get("pixeln-canvas")) {
     customElements.define("pixeln-canvas", PixelnCanvas);
   }

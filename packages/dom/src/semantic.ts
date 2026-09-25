@@ -22,6 +22,7 @@ export const TAG_CONFIG: Record<string, TagConfig> = {
 export interface SemanticChild {
   tag: string;
   text: string;
+  attributes?: Record<string, string | number | boolean>;
   font?: string;
   color?: string;
   bg?: string;
@@ -29,6 +30,75 @@ export interface SemanticChild {
   radius?: number;
   padding?: number;
   onClick?: (() => void) | null;
+}
+
+const COMMON_ATTRIBUTES = new Set(["id", "role", "title", "tabindex"]);
+const TAG_ATTRIBUTES: Record<string, Set<string>> = {
+  button: new Set(["type", "disabled", "name", "value"]),
+  a: new Set(["href", "target", "rel", "download"]),
+};
+
+export function isSemanticAttribute(tag: string, name: string): boolean {
+  const normalized = name.toLowerCase();
+  return COMMON_ATTRIBUTES.has(normalized)
+    || TAG_ATTRIBUTES[tag]?.has(normalized) === true
+    || normalized.startsWith("aria-")
+    || normalized.startsWith("data-");
+}
+
+export function applySemanticAttributes(
+  element: HTMLElement,
+  attributes: SemanticChild["attributes"],
+) {
+  if (!attributes) return;
+
+  for (const [name, value] of Object.entries(attributes)) {
+    if (value === false) {
+      element.removeAttribute(name);
+    } else if (value === true) {
+      element.setAttribute(name, "");
+    } else {
+      element.setAttribute(name, String(value));
+    }
+  }
+}
+
+export interface SemanticOverlayOptions {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  scale: number;
+}
+
+export function createSemanticOverlay(
+  child: SemanticChild,
+  options: SemanticOverlayOptions,
+  documentRef: Pick<Document, "createElement"> = document,
+): HTMLElement {
+  const element = documentRef.createElement(child.tag);
+  element.textContent = child.text;
+  applySemanticAttributes(element, child.attributes);
+  applyOverlayPosition(element, options);
+  element.style.color = "transparent";
+  element.style.fontSize = "0";
+  element.style.margin = "0";
+  element.style.padding = "0";
+  element.style.border = "none";
+  element.style.background = "transparent";
+  const disabled = child.attributes?.disabled === true
+    || child.attributes?.disabled === ""
+    || child.attributes?.disabled === "disabled";
+  element.style.cursor = disabled
+    ? "default"
+    : child.tag === "button" || child.tag === "a" ? "pointer" : "default";
+  element.style.pointerEvents = "auto";
+
+  if (child.onClick) {
+    element.addEventListener("click", child.onClick);
+  }
+
+  return element;
 }
 
 export function childrenToLayout(children: SemanticChild[], gap: number): LayoutNode {
@@ -103,23 +173,13 @@ export function renderPixeln(opts: RenderPixelnOptions): RenderPixelnResult {
     const elH = size.h + p * 2;
     const elW = size.w + p * 2;
 
-    const el = document.createElement(child.tag);
-    el.textContent = child.text;
-    applyOverlayPosition(el, { x: padding, y: cy, w: elW, h: elH, scale });
-    el.style.color = "transparent";
-    el.style.fontSize = "0";
-    el.style.margin = "0";
-    el.style.padding = "0";
-    el.style.border = "none";
-    el.style.background = "transparent";
-    el.style.cursor = child.tag === "button" || child.tag === "a" ? "pointer" : "default";
-    el.style.pointerEvents = "auto";
-
-    if (child.onClick) {
-      el.addEventListener("click", child.onClick);
-    }
-
-    overlays.push(el);
+    overlays.push(createSemanticOverlay(child, {
+      x: padding,
+      y: cy,
+      w: elW,
+      h: elH,
+      scale,
+    }));
     cy += elH + gap;
   }
 

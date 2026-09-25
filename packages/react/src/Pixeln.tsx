@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { renderPixeln, TAG_CONFIG } from "@pixeln/dom";
+import { isSemanticAttribute, renderPixeln, TAG_CONFIG } from "@pixeln/dom";
 import type { SemanticChild } from "@pixeln/dom";
 
 export interface PixelnProps {
@@ -12,7 +12,21 @@ export interface PixelnProps {
   children?: React.ReactNode;
 }
 
-function extractChildren(children: React.ReactNode): SemanticChild[] {
+function extractAttributes(tag: string, props: Record<string, unknown>) {
+  const attributes: Record<string, string | number | boolean> = {};
+
+  for (const [propName, value] of Object.entries(props)) {
+    const attributeName = propName === "tabIndex" ? "tabindex" : propName;
+    if (!isSemanticAttribute(tag, attributeName)) continue;
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+      attributes[attributeName] = value;
+    }
+  }
+
+  return attributes;
+}
+
+export function extractChildren(children: React.ReactNode): SemanticChild[] {
   const result: SemanticChild[] = [];
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return;
@@ -22,6 +36,7 @@ function extractChildren(children: React.ReactNode): SemanticChild[] {
     result.push({
       tag,
       text: typeof props.children === "string" ? props.children : "",
+      attributes: extractAttributes(tag, props),
       font: props.font,
       color: props.color,
       bg: props.bg,
